@@ -10,8 +10,77 @@ Concurrency is a programming property (overlapped execution) that can occur even
 - Java 8 added support for Streams and their parallel processing. It also added the **CompletableFuture** implementation of Future.
 
 ```java
-sum = Arrays.stream(numbers).parallel().sum();
+int sum = Arrays.stream(numbers).parallel().sum();
 ```
 The parallel Stream iteration abstracts a given use pattern of threads.
 
-- Java 9 provided explicit support for distributed asynchronous programming via the publish-subscribe protocol, specified by the java.util.concurrent.Flow interface.  
+- Java 9 provided explicit support for distributed asynchronous programming via the publish-subscribe protocol, specified by the java.util.concurrent.**Flow** interface. 
+
+### Executors and thread pools
+
+- Java threads access operating-system threads directly. The problem is that operating-system threads are expensive to create and to destroy (involving interaction with page tables), and moreover, only a limited number exist.- The Executor framework allows Java programmers to decouple task submission from task execution.
+
+```java
+// Factory method used to create a pool of threads
+ExecutorService newFixedThreadPool(int nThreads);
+```
+
+It is common to have a long-running ExecutorService that manages an always-running Internet service.  
+
+### Synchronous APIs
+
+```java
+int y = f(x);
+int z = g(x);
+System.out.println(y + z);
+```
+
+1.- Using threads:
+
+```java
+class ThreadExample {
+  public static void main(String[] args) throws InterruptedException {
+    Result result = new Result();
+
+    Thread t1 = new Thread(() -> { result.left = f(x); } );
+    Thread t2 = new Thread(() -> { result.right = g(x); });
+    t1.start();
+    t2.start();
+    t1.join();
+    t2.join();
+    System.out.println(result.left + result.right);
+  }
+  private static class Result {
+    private int left;
+    private int right;
+  }
+}
+```
+
+2.- Using the *Future* API interface instead of *Runnable*:
+
+```java
+public class ExecutorServiceExample {
+  public static void main(String[] args)
+    throws ExecutionException, InterruptedException {
+    ExecutorService executorService =    Executors.newFixedThreadPool(2);
+    Future<Integer> y = executorService.submit(() -> f(x));
+    Future<Integer> z = executorService.submit(() -> g(x));
+    System.out.println(y.get() + z.get());
+
+    executorService.shutdown();
+  }
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+ 
