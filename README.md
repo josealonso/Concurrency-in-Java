@@ -27,7 +27,7 @@ ExecutorService newFixedThreadPool(int nThreads);
 
 It is common to have a long-running ExecutorService that manages an always-running Internet service.  
 
-### Synchronous APIs
+### Synchronous or blocking APIs
 
 ```java
 int y = f(x);
@@ -72,6 +72,38 @@ public class ExecutorServiceExample {
   }
 }
 ```
+
+### Changing to an asynchronous API
+
+change the signature of f and g to
+
+```java
+Future<Integer> f(int x);
+Future<Integer> g(int x);
+```
+
+and change the calls to
+
+```java
+Future<Integer> y = f(x);
+Future<Integer> z = g(x);
+System.out.println(y.get() + z.get());
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
